@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>The Maine Event</title>
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- ============================================
+         MAP
+         ============================================ -->
+
+    <div id="map"></div>
+
+
+    <!-- ============================================
+         TRAVEL STATUS
+         ============================================ -->
+
+    <div id="status-panel">
+
+        <div class="status-header">
+
+            <div>
+
+                <div class="status-kicker">
+                    THE MAINE EVENT
+                </div>
+
+                <div class="status-title">
+                    TRAVEL STATUS
+                </div>
+
+            </div>
+
+            <div
+                id="status-progress"
+                class="status-progress"
+            >
+                0%
+            </div>
+
+        </div>
+
+
+        <div
+            id="status-list"
+            class="status-list"
+        >
+            Loading...
+        </div>
+
+
+        <div
+            id="status-footer"
+            class="status-footer"
+        >
+            Everyone is getting ready...
+        </div>
+
+    </div>
+
+
+    <!-- ============================================
+         TIMELINE
+         ============================================ -->
+
+    <div id="timeline-panel">
+
+        <button
+            id="play-button"
+            type="button"
+        >
+            ▶ Play
+        </button>
+
+
+        <div id="time-display">
+            Loading...
+        </div>
+
+
+        <div id="timeline-wrapper">
+
+            <div id="timeline-events"></div>
+
+
+            <input
+                type="range"
+                id="slider"
+                min="0"
+                max="1"
+                step="0.0001"
+                value="0"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================================
+         LEAFLET
+         ============================================ -->
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    ></script>
+
+
+    <!-- ============================================
+         TRIP DATA
+         ============================================ -->
+
+    <script src="data.js"></script>
+
+
+    <!-- ============================================
+         APPLICATION
+         ============================================ -->
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
