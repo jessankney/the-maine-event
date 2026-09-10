@@ -8,8 +8,12 @@
 // MAIN TRIP TIMELINE
 // ============================================================
 
+// The visualization begins early enough to show Megan's
+// Wednesday morning airport run and ends after the
+// Providence group reaches Bethel Thursday evening.
+
 const tripStart = new Date(
-    '2026-10-21T10:00:00'
+    '2026-10-21T04:00:00'
 );
 
 const tripCheckIn = new Date(
@@ -20,13 +24,8 @@ const tripCheckout = new Date(
     '2026-10-25T10:00:00'
 );
 
-
-// The visualization ends early Friday morning.
-// This gives the map enough room to show everyone
-// getting into Bethel without making the slider enormous.
-
 const tripTimelineEnd = new Date(
-    '2026-10-23T04:00:00'
+    '2026-10-22T20:00:00'
 );
 
 
@@ -34,17 +33,8 @@ const tripTimelineEnd = new Date(
 // LOCATIONS
 // ============================================================
 //
-// IMPORTANT:
-// These are public meeting points rather than anyone's
-// residential addresses.
-//
-// Jess       → Cook Out, Blacksburg
-// Sam        → Cook Out, Lexington
-// Group      → Cook Out, Battlefield Blvd, Chesapeake
-//
-// The current app treats the Virginia Beach / Chesapeake
-// travelers as one group, so they share the Battlefield
-// Cook Out starting point for now.
+// Public-safe stand-ins are used instead of residential
+// addresses because this map lives in a public GitHub repo.
 //
 // ============================================================
 
@@ -61,56 +51,66 @@ const tripLocations = {
 
 
     // --------------------------------------------------------
-    // STARTING POINTS
+    // JESS
     // --------------------------------------------------------
 
-    // Cook Out
-    // 1311 S Main St
-    // Blacksburg, VA
+    // Cook Out — Blacksburg
     jessHome: [
         37.2170378,
         -80.4007365
     ],
 
 
-    // Cook Out
-    // 445 E Nelson St
-    // Lexington, VA
+    // --------------------------------------------------------
+    // SAM
+    // --------------------------------------------------------
+
+    // Cook Out — Lexington
     samHome: [
         37.779835,
         -79.43726
     ],
 
 
-    // Cook Out
-    // 5670 Indian River Rd
-    // Virginia Beach, VA
-    //
-    // Kept here for future individual routing.
+    // --------------------------------------------------------
+    // OLIVIA
+    // --------------------------------------------------------
+
+    // 7-Eleven near Newtown Rd / Lake Edward Dr.
+    // Public stand-in for Olivia's home.
+    oliviaHome: [
+        36.8576948,
+        -76.1771738
+    ],
+
+
+    // --------------------------------------------------------
+    // MEGAN
+    // --------------------------------------------------------
+
+    // Buffalo Wild Wings near Town Center / Kempsville.
     meganHome: [
-        36.8055928,
-        -76.1903827
+        36.839605,
+        -76.137668
     ],
 
 
-    // Cook Out
-    // 1328 Battlefield Blvd N
-    // Chesapeake, VA
-    //
-    // This is the shared starting point used by the
-    // current group routing system.
+    // --------------------------------------------------------
+    // BRENNEN + MARY
+    // --------------------------------------------------------
+
+    // Cook Out — Battlefield Blvd, Chesapeake
     groupHome: [
-        36.7657656,
-        -76.2524169
+        36.765729,
+        -76.252661
     ],
 
 
-    // Cook Out
-    // 1620 General Booth Blvd
-    // Virginia Beach, VA
-    //
-    // Reserved for Marshall when individual group
-    // routing is added.
+    // --------------------------------------------------------
+    // MARSHALL
+    // --------------------------------------------------------
+
+    // Cook Out — General Booth Blvd
     marshallHome: [
         36.8103,
         -75.9893
@@ -126,16 +126,29 @@ const tripLocations = {
         -76.2012
     ],
 
-    bostonAirport: [
-        42.3656,
-        -71.0096
+    // Rhode Island T.F. Green International Airport
+    providenceAirport: [
+        41.7240,
+        -71.4290
+    ],
+
+
+    // --------------------------------------------------------
+    // PROVIDENCE
+    // --------------------------------------------------------
+
+    // Public city-center stand-in for where the group
+    // spends Thursday before leaving for Maine.
+    providence: [
+        41.8240,
+        -71.4128
     ]
 
 };
 
 
 // ============================================================
-// JESS + SAM
+// JESS + SAM + OLIVIA
 // ============================================================
 
 const jessTrip = {
@@ -144,18 +157,22 @@ const jessTrip = {
 
     color: '#e63946',
 
-    departure: '2026-10-22T00:00:00',
+    // Jess leaves Blacksburg at 8 PM Wednesday.
+    departure: '2026-10-21T20:00:00',
 
-    pickup: '2026-10-22T01:23:00',
+    // Planned stops / buffers.
+    samStopMinutes: 20,
 
-    // OSRM determines the actual driving time.
-    //
-    // We then add planned stop time in app.js.
-    //
-    // The visualization is intentionally targeted toward
-    // roughly 4:30 PM arrival.
+    // The 20-minute gas/stop buffer is applied when
+    // the group reaches Virginia Beach.
+    virginiaBeachStopMinutes: 20,
 
-    targetArrival: '2026-10-22T16:30:00'
+    // Roughly two hours from arriving in VB to leaving
+    // Olivia's place around 4 AM.
+    virginiaBeachStayMinutes: 120,
+
+    // Four 10-minute stretch/driver-switch stops.
+    maineStopMinutes: 40
 
 };
 
@@ -164,11 +181,18 @@ const samTrip = {
 
     name: 'Sam',
 
-    color: '#457b9d',
+    // Sam is picked up in Buena Vista.
+    pickupLocation: 'Buena Vista, VA'
 
-    pickup: '2026-10-22T01:23:00',
+};
 
-    targetArrival: '2026-10-22T16:30:00'
+
+const oliviaTrip = {
+
+    name: 'Olivia',
+
+    // Olivia joins Jess and Sam in Virginia Beach.
+    departureFromVirginiaBeach: 'approximately 4:00 AM'
 
 };
 
@@ -183,42 +207,55 @@ const meganTrip = {
 
     color: '#9b5de5',
 
-    homeDeparture: '2026-10-21T14:00:00',
+    // Delta ORF -> PVD
+    airportArrival: '2026-10-21T04:30:00',
 
-    airportArrival: '2026-10-21T15:00:00',
+    flightDeparture: '2026-10-21T06:00:00',
 
-    flightDeparture: '2026-10-21T16:00:00',
+    flightArrival: '2026-10-21T12:17:00',
 
-    flightArrival: '2026-10-21T17:30:00',
-
-    bostonDeparture: '2026-10-22T20:00:00'
+    // She stays in Providence overnight and joins
+    // Brennen + Mary for the Maine drive Thursday.
+    providenceDeparture: '2026-10-22T15:00:00'
 
 };
 
 
 // ============================================================
-// VIRGINIA BEACH / CHESAPEAKE GROUP
+// BRENNEN + MARY
 // ============================================================
 
 const groupTrip = {
 
     names: [
         'Brennen',
-        'Mary',
-        'Allison',
-        'Olivia',
-        'Marshall'
+        'Mary'
     ],
 
-    departure: '2026-10-22T14:00:00',
+    // Breeze ORF -> PVD
+    airportArrival: '2026-10-21T20:29:00',
 
-    airportArrival: '2026-10-22T15:00:00',
+    flightDeparture: '2026-10-21T21:59:00',
 
-    flightDeparture: '2026-10-22T17:00:00',
+    flightArrival: '2026-10-21T23:26:00',
 
-    flightArrival: '2026-10-22T18:30:00',
+    // They meet Megan in Providence and leave together.
+    providenceDeparture: '2026-10-22T15:00:00'
 
-    bostonDeparture: '2026-10-22T20:00:00'
+};
+
+
+// ============================================================
+// MARSHALL
+// ============================================================
+
+const marshallTrip = {
+
+    name: 'Marshall',
+
+    // Confirmed traveler, but flight has not been purchased yet.
+    // This is intentionally not a fake flight time.
+    travelTBD: '2026-10-21T04:00:00'
 
 };
 
@@ -226,90 +263,91 @@ const groupTrip = {
 // ============================================================
 // TIMELINE EVENTS
 // ============================================================
-//
-// These are deliberately just points.
-// JavaScript creates the little hoverable markers.
-// No text is permanently printed across the timeline.
-//
 
 const timelineEvents = [
 
     {
-        label: 'Megan leaves Virginia Beach',
+        label: 'Megan leaves for ORF',
         emoji: '🚗',
-        time: '2026-10-21T14:00:00'
+        time: '2026-10-21T04:30:00'
     },
 
     {
-        label: 'Megan reaches Norfolk International Airport',
+        label: 'Megan arrives at ORF',
         emoji: '🧍',
-        time: '2026-10-21T15:00:00'
+        time: '2026-10-21T04:30:00'
     },
 
     {
-        label: 'Megan flies to Boston',
+        label: 'Megan flies Delta ORF → PVD',
         emoji: '✈️',
-        time: '2026-10-21T16:00:00'
+        time: '2026-10-21T06:00:00'
     },
 
     {
-        label: 'Megan arrives in Boston',
+        label: 'Megan arrives in Providence',
         emoji: '📍',
-        time: '2026-10-21T17:30:00'
+        time: '2026-10-21T12:17:00'
+    },
+
+    {
+        label: 'Brennen + Mary leave for ORF',
+        emoji: '🚗',
+        time: '2026-10-21T20:29:00'
+    },
+
+    {
+        label: 'Breeze ORF → PVD departs',
+        emoji: '✈️',
+        time: '2026-10-21T21:59:00'
+    },
+
+    {
+        label: 'Brennen + Mary arrive in Providence',
+        emoji: '📍',
+        time: '2026-10-21T23:26:00'
     },
 
     {
         label: 'Jess leaves Blacksburg',
         emoji: '🚗',
-        time: '2026-10-22T00:00:00'
+        time: '2026-10-21T20:00:00'
     },
 
     {
-        label: 'Jess picks up Sam in Buena Vista',
+        label: 'Jess reaches Buena Vista',
         emoji: '👋',
-        time: '2026-10-22T01:23:00'
+        time: '2026-10-21T21:30:00'
     },
 
     {
-        label: 'Virginia Beach / Chesapeake group leaves',
+        label: 'Jess + Sam leave Buena Vista',
         emoji: '🚗',
-        time: '2026-10-22T14:00:00'
+        time: '2026-10-21T21:50:00'
+    },
+
+    {
+        label: 'Jess + Sam reach Virginia Beach',
+        emoji: '📍',
+        time: '2026-10-22T02:00:00'
+    },
+
+    {
+        label: 'Jess + Sam + Olivia leave Virginia Beach',
+        emoji: '🚗',
+        time: '2026-10-22T04:00:00'
+    },
+
+    {
+        label: 'Megan + Brennen + Mary leave Providence',
+        emoji: '🚗',
+        time: '2026-10-22T15:00:00'
     },
 
     {
         label: 'Bethel check-in',
         emoji: '🦞',
         time: '2026-10-22T16:00:00'
-    },
-
-    {
-        label: 'Group flight leaves Norfolk',
-        emoji: '✈️',
-        time: '2026-10-22T17:00:00'
-    },
-
-    {
-        label: 'Group arrives in Boston',
-        emoji: '📍',
-        time: '2026-10-22T18:30:00'
-    },
-
-    {
-        label: 'Megan leaves Boston for Bethel',
-        emoji: '🚗',
-        time: '2026-10-22T20:00:00'
-    },
-
-    {
-        label: 'Group leaves Boston for Bethel',
-        emoji: '🚗',
-        time: '2026-10-22T20:00:00'
-    },
-
-    {
-        label: 'Jess + Sam arrive in Bethel',
-        emoji: '🦞',
-        time: '2026-10-22T16:30:00'
     }
 
 ];
